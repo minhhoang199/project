@@ -3,6 +3,8 @@ package com.example.demo.service.impl;
 import com.example.demo.domain.Category;
 import com.example.demo.repesitory.CategoryRepository;
 import com.example.demo.service.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -52,4 +54,19 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(aLong);
     }
 
+
+    @Override
+    public List<Category> findByNameContaining(String name) {
+        return categoryRepository.findByNameContaining(name);
+    }
+
+    @Override
+    public Page<Category> findByNameContaining(String name, Pageable pageable) {
+        return categoryRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public Page<Category> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable);
+    }
 }
