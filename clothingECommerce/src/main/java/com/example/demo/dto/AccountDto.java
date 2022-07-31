@@ -1,8 +1,7 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
 import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @AllArgsConstructor

@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.domain.Category;
+import com.example.demo.entity.Category;
 import com.example.demo.repesitory.CategoryRepository;
 import com.example.demo.service.CategoryService;
 import org.springframework.data.domain.Page;

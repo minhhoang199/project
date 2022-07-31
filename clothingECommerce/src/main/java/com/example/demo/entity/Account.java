@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,14 +14,12 @@ import java.io.Serializable;
 @Getter
 @Entity
 @Table
-public class Category implements Serializable {
+public class Account implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(length = 50, nullable = false)
-    private String name;
-
-    public Category(String name) {
-        this.name = name;
-    }
+    private int id;
+    @Column(length = 50)
+    private String userName;
+    @Column(length = 20, nullable = false)
+    private String password;
 }

@@ -29,9 +29,9 @@
                             <form th:action="@{/admin/categories/list}">
                                 <div class="form-inline float-left">
                                     <label for="name">Name:</label>
-                                    <input type="name" class="form-control" name="name"
-                                           id="name" aria-describedby="helpId" placeholder="Name">
-                                    <button class="btn btn-primary">Search</button>
+                                    <input type="text" class="form-control" name="name"
+                                           id="name" th:value="${name}"/>
+                                    <input type="submit" value="Search"/>
                                 </div>
                             </form>
                             <div class="float-right">
@@ -63,46 +63,47 @@
                         </tr>
                         </tbody>
                     </table>
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item"><a class="page-link" th:href="@{'/admin/categories/list?page=0'}">First</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            <li class="page-item"><a class="page-link" th:href="@{'/admin/categories/list?page=' + ${totalPages-1}">Last</a></li>
-                        </ul>
-                    </nav>
-
-<!--                    <div th:if="${totalPages > 1}">-->
-<!--                        <div class="row col-sm-10">-->
-<!--                            <div class="col-sm-2">-->
-<!--                                Total Rows: [[${totalItems}]]-->
-<!--                            </div>-->
-<!--                            <div class="col-sm-1">-->
-<!--            <span th:each="i: ${#numbers.sequence(1, totalPages)}">-->
-<!--      <a th:if="${currentPage != i}" th:href="@{'/admin/categories/list?page=' + ${i}}">[[${i}]]</a>-->
-<!--      <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp; &nbsp;-->
-<!--            </span>-->
-<!--                            </div>-->
-<!--                            <div class="col-sm-1">-->
-<!--                                <a th:if="${currentPage < totalPages}"-->
-<!--                                   th:href="@{'/admin/categories/list?page=' + ${currentPage + 1}}">Next</a>-->
-<!--                                <span th:unless="${currentPage < totalPages}">Next</span>-->
-<!--                            </div>-->
-
-<!--                            <div class="col-sm-1">-->
-<!--                                <a th:if="${currentPage < totalPages}"-->
-<!--                                   th:href="@{'/admin/categories/list?page=' + ${totalPages}}">Last</a>-->
-<!--                                <span th:unless="${currentPage < totalPages}">Last</span>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-               </div>
+<!--                    <nav aria-label="Page navigation example">-->
+<!--                        <ul class="pagination">-->
+<!--                            <li class="page-item"><a class="page-link" th:href="@{'/admin/categories/list?page=0'}">First</a>-->
+<!--                            </li>-->
+<!--                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>-->
+<!--                            <li class="page-item"><a class="page-link" href="#">Next</a></li>-->
+<!--                            <li class="page-item"><a class="page-link"-->
+<!--                                                     th:href="@{'/admin/categories/list?page=${totalPages-1}'}>Last</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </nav>-->
+                </div>
                 <div class="card-footer text-muted">
                     <nav aria-label="Page navigation">
+                        <div th:if="${totalPages > 1}">
+                            <div class="row col-sm-10">
+                                <div class="col-sm-5">
+                                    Total Rows: [[${totalItems}]]
+                                </div>
+                                <div class="col-sm-3">
+            <span th:each="i: ${#numbers.sequence(0, totalPages-1)}">
+      <a th:if="${currentPage != i}" th:href="@{/admin/categories/list(name=${name}, page=${i})}">[[${i+1}]]</a>
+      <span th:unless="${currentPage != i}">[[${i+1}]]</span> &nbsp; &nbsp;
+            </span>
+                                </div>
+                                <div class="col-sm-1">
+                                    <a th:if="${currentPage < totalPages}"
+                                       th:href="@{/admin/categories/list(name=${name}, page=${currentPage + 1})}">Next</a>
+                                    <span th:unless="${currentPage < totalPages}">Next</span>
+                                </div>
+
+                                <div class="col-sm-1">
+                                    <a th:if="${currentPage < totalPages}"
+                                       th:href="@{/admin/categories/list(name=${name}, page=${totalPages-1})}">Last</a>
+                                    <span th:unless="${currentPage < totalPages}">Last</span>
+                                </div>
+                            </div>
+                        </div>
                     </nav>
                 </div>
             </div>
-
         </div>
 
     </section>

@@ -1,14 +1,13 @@
 package com.example.demo.controller.admin;
 
-import com.example.demo.domain.Category;
-import com.example.demo.model.CategoryDto;
+import com.example.demo.entity.Category;
+import com.example.demo.dto.CategoryDto;
 import com.example.demo.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -16,10 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping(path = "admin/categories")
@@ -90,7 +86,7 @@ public class CategoryController {
     }
 
     @GetMapping("list")
-    public String searchAtListCategory(Model model,
+    public String searchAtListCategory(ModelMap model,
                                        @RequestParam(value = "name", required = false) String name,
                                        @RequestParam(value = "page") Optional<Integer> page)  {
         int currentPage = page.orElse(0);
@@ -104,6 +100,7 @@ public class CategoryController {
         } else {
             resultPage = categoryService.findByNameContaining(name, pageable);
             model.addAttribute("categories", resultPage);
+            model.addAttribute("name", name);
         }
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", resultPage.getTotalPages());
