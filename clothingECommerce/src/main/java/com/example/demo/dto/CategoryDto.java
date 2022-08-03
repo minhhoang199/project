@@ -1,9 +1,6 @@
 package com.example.demo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
@@ -13,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 public class CategoryDto implements Serializable {
     private Long id;
     @NotEmpty

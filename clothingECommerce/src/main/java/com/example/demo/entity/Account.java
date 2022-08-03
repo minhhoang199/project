@@ -19,7 +19,7 @@ public class Account implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(length = 50)
-    private String userName;
+    private String username;
     @Column(length = 20, nullable = false)
     private String password;
 }

@@ -50,11 +50,11 @@ public class CategoryController {
         CategoryDto dto = new CategoryDto();
         if (opt.isPresent()) {
             Category entity = opt.get();
-
             dto.setEdit(true);
 
-            model.addAttribute("category", dto);
             BeanUtils.copyProperties(entity, dto);
+            model.addAttribute("category", dto);
+
             return new ModelAndView("admin/categories/addOrEdit", model);
         }
         model.addAttribute("message", "Category dose not exist");

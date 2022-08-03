@@ -11,6 +11,6 @@ import java.io.Serializable;
 @Data
 public class AccountDto implements Serializable {
     private int id;
-    private String userName;
+    private String username;
     private String password;
 }
