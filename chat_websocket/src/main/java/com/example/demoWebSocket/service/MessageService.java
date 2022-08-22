@@ -1,19 +1,122 @@
-package com.example.demoWebSocket.service;
-import com.example.demoWebSocket.model.PrivateMessage;
-import com.example.demoWebSocket.repository.MessageRepository;
+package com.example.webSocketDemo.service;
+
+import com.example.webSocketDemo.model.Conversation;
+import com.example.webSocketDemo.model.Message;
+import com.example.webSocketDemo.model.User;
+import com.example.webSocketDemo.model.enums.MessageStatus;
+import com.example.webSocketDemo.model.enums.MessageType;
+import com.example.webSocketDemo.repository.ConversationRepository;
+import com.example.webSocketDemo.repository.MessageRepository;
+import com.example.webSocketDemo.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MessageService {
     private MessageRepository messageRepository;
+    private UserRepository userRepository;
+    private ConversationRepository conversationRepository;
 
-    public MessageService(MessageRepository messageRepository) {
+    public MessageService(MessageRepository messageRepository,
+                          UserRepository userRepository,
+                          ConversationRepository conversationRepository) {
         this.messageRepository = messageRepository;
+        this.userRepository = userRepository;
+        this.conversationRepository = conversationRepository;
     }
 
-    public void saveMessage(PrivateMessage privateMessage){
-        if (privateMessage != null){
-            messageRepository.save(privateMessage);
+    public List<Message> getAllMessage(String content){
+        if (content == null ||
+                content.length() == 0) {
+            throw new RuntimeException("Invalid message content");
         }
+        return messageRepository.findByContentContaining(content);
+    }
+    //Add new message
+    public void saveMessage(Message newMessage, Long senderId, Long conversationId) {
+        //validate new message
+        if (newMessage != null){
+            if (newMessage.getContent() == null ||
+                    newMessage.getContent().length() == 0) {
+                throw new RuntimeException("Invalid message content");
+            }
+            messageRepository.save(newMessage);
+        }
+
+        //validate sender id
+        if (senderId == null ||
+                senderId <= 0) {
+            throw new RuntimeException("Invalid sender Id");
+        }
+
+        var senderOtp = this.userRepository.findById(senderId);
+        if (senderOtp.isEmpty()){
+            throw new RuntimeException("Not found sender");
+        }
+        User sender = senderOtp.get();
+
+        //validate conversation id
+        if (conversationId == null ||
+                conversationId <= 0) {
+            throw new RuntimeException("Invalid conversation Id");
+        }
+
+        var conversationOtp = this.conversationRepository.findById(conversationId);
+        if (conversationOtp.isEmpty()){
+            throw new RuntimeException("Not found conversation");
+        }
+        Conversation conversation = conversationOtp.get();
+
+        newMessage.setSender(sender);
+        newMessage.setConversation(conversation);
+        newMessage.setType(MessageType.CHAT);
+        newMessage.setMessageStatus(MessageStatus.ACTIVE);
+
+        conversation.getMessages().add(newMessage);
+        sender.getMessages().add(newMessage);
+
+        this.messageRepository.save(newMessage);
+        this.userRepository.save(sender);
+        this.conversationRepository.save(conversation);
+    }
+
+    //Edit message
+    public void editMessage(Long messageId, String newContent) {
+        if (messageId == null ||
+                messageId <= 0) {
+            throw new RuntimeException("Invalid message Id");
+        }
+
+        var messageOtp = this.messageRepository.findById(messageId);
+        if (messageOtp.isEmpty()){
+            throw new RuntimeException("Not found message");
+        }
+
+        Message currentMessage = messageOtp.get();
+
+        if (newContent == null ||
+                newContent.length() == 0) {
+            throw new RuntimeException("Invalid message content");
+        }
+        currentMessage.setContent(newContent);
+        messageRepository.save(currentMessage);
+    }
+
+    //Delete/Deactive message
+    public void deactiveMessage(Long messageId){
+        if (messageId == null ||
+                messageId <= 0) {
+            throw new RuntimeException("Invalid message Id");
+        }
+
+        var messageOtp = this.messageRepository.findById(messageId);
+        if (messageOtp.isEmpty()){
+            throw new RuntimeException("Not found message");
+        }
+        Message currentMessage = messageOtp.get();
+        currentMessage.setMessageStatus(MessageStatus.DEACTIVE);
+
+        this.messageRepository.save(currentMessage);
     }
 }

@@ -1,9 +1,14 @@
-package com.example.demoWebSocket.repository;
+package com.example.webSocketDemo.repository;
 
-import com.example.demoWebSocket.model.PrivateMessage;
+import com.example.webSocketDemo.model.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface MessageRepository extends JpaRepository<PrivateMessage, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long> {
+    @Query("SELECT m FROM Message m WHERE m.content LIKE %?1% ORDER BY m.createdAt")
+    List<Message> findByContentContaining(String content);
 }

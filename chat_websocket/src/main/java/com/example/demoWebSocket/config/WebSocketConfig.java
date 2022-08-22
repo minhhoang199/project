@@ -1,4 +1,4 @@
-package com.example.demoWebSocket.configuration;
+package com.example.webSocketDemo.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -8,18 +8,19 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class MessageConfig implements WebSocketMessageBrokerConfigurer  {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
+    public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // with sockjs
-        registry.addEndpoint("/ws-message").setAllowedOriginPatterns("*").withSockJS();
-        // without sockjs
-        //registry.addEndpoint("/ws-message").setAllowedOriginPatterns("*");
+    public void registerStompEndpoints(final StompEndpointRegistry registry) {
+//        registry.addEndpoint("/chat");
+//        registry.addEndpoint("/chat").setAllowedOrigins("*").withSockJS();
+//        registry.addEndpoint("/chatwithbots");
+//        registry.addEndpoint("/chatwithbots").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/chat").withSockJS();
     }
 }
