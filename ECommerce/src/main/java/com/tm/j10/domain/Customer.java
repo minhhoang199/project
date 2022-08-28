@@ -1,13 +1,15 @@
 package com.tm.j10.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Customer.
@@ -15,6 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "customer")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Data
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +64,10 @@ public class Customer implements Serializable {
     @JsonIgnoreProperties(value = { "district", "customers", "shopOrders" }, allowSetters = true)
     private Ward ward;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    @ManyToMany(mappedBy = "customers")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = {"customers"}, allowSetters = true)
+    private Set<Voucher> vouchers = new HashSet<>();
 
     public Long getId() {
         return this.id;

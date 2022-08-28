@@ -25,8 +25,9 @@ public class CategoryController {
         var ret = this.categoryService.getAllCategory();
         return ResponseEntity.ok(ret);
     }
+
     @GetMapping("/slug")
-    public ResponseEntity<Category> getCategorieSlug(@RequestParam ("slug") String slug) {
+    public ResponseEntity<Category> getCategorieSlug(@RequestParam("slug") String slug) {
         var ret = this.categoryService.getAllCategorySlug(slug);
         return ResponseEntity.ok(ret.get());
     }

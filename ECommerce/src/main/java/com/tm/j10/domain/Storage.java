@@ -24,7 +24,7 @@ public class Storage implements Serializable {
 
     @DecimalMin(value = "1")
     @Column(name = "capacity")
-    private Double capacity;
+    private Long capacity;
 
     @Size(max = 200)
     @Column(name = "created_by", length = 200)
@@ -75,16 +75,16 @@ public class Storage implements Serializable {
         this.id = id;
     }
 
-    public Double getCapacity() {
+    public Long getCapacity() {
         return this.capacity;
     }
 
-    public Storage capacity(Double capacity) {
+    public Storage capacity(Long capacity) {
         this.setCapacity(capacity);
         return this;
     }
 
-    public void setCapacity(Double capacity) {
+    public void setCapacity(Long capacity) {
         this.capacity = capacity;
     }
 

@@ -2,7 +2,10 @@ package com.tm.j10.service;
 
 import com.tm.j10.domain.ShopOrder;
 import com.tm.j10.domain.enumeration.OrderStatus;
+import com.tm.j10.repository.CustomerRepository;
 import com.tm.j10.repository.ShopOrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,9 +13,11 @@ import java.util.Optional;
 @Service
 public class ShopOrderService {
     private ShopOrderRepository shopOrderRepository;
+    private CustomerRepository customerRepository;
 
-    public ShopOrderService(ShopOrderRepository shopOrderRepository) {
+    public ShopOrderService(ShopOrderRepository shopOrderRepository, CustomerRepository customerRepository) {
         this.shopOrderRepository = shopOrderRepository;
+        this.customerRepository = customerRepository;
     }
 
     private void validateNumber(Long number) {
@@ -46,9 +51,9 @@ public class ShopOrderService {
     public void processOrder(Long orderId) {
         this.validateNumber(orderId);
         var optOrder = this.shopOrderRepository.findById(orderId);
-        if (optOrder.isPresent()){
+        if (optOrder.isPresent()) {
             ShopOrder currentShopOrder = optOrder.get();
-            if (currentShopOrder.getOrderStatus().equals(OrderStatus.CREATED)){
+            if (currentShopOrder.getOrderStatus().equals(OrderStatus.CREATED)) {
                 currentShopOrder.setOrderStatus(OrderStatus.PROCESS);
                 this.shopOrderRepository.save(currentShopOrder);
             } else {
@@ -56,6 +61,26 @@ public class ShopOrderService {
             }
         } else {
             throw new RuntimeException("Not found order");
+        }
+    }
+
+    public Page<ShopOrder> getAllByCustomerId(Long customerId, Pageable pageable) {
+        this.validateNumber(customerId);
+        var customerOtp = this.customerRepository.findById(customerId);
+        if (customerOtp.isPresent()) {
+            return this.shopOrderRepository.findByCustomerId(customerId, pageable);
+        } else {
+            throw new RuntimeException("Not found customer");
+        }
+    }
+
+    public Page<ShopOrder> getAllByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable) {
+        this.validateNumber(customerId);
+        var customerOtp = this.customerRepository.findById(customerId);
+        if (customerOtp.isPresent()) {
+            return this.shopOrderRepository.findByCustomerIdAndOrderStatus(customerId, orderStatus, pageable);
+        } else {
+            throw new RuntimeException("Not found customer");
         }
     }
 }

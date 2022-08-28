@@ -16,4 +16,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllCategoryByIsEnableIsTrue();
 
     Optional<Category> findBySlug(String slug);
+
+    Optional<Category> findByIdAndIsEnableIsTrue(Long categoryId);
 }

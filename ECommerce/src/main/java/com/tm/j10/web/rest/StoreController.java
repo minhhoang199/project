@@ -23,4 +23,5 @@ public class StoreController {
         var ret = this.storeService.getAllStore();
         return ResponseEntity.ok(ret);
     }
+
 }

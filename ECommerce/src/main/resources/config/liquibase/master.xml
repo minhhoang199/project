@@ -44,6 +44,7 @@
     <include file="config/liquibase/changelog/20220810031351_added_entity_constraints_Storage.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220810031355_added_entity_constraints_District.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220810031356_added_entity_constraints_Ward.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220810031358_added_entity_Voucher.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

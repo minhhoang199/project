@@ -1,5 +1,6 @@
 package com.tm.j10.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tm.j10.domain.enumeration.VoucherStatus;
 import com.tm.j10.domain.enumeration.VoucherValueType;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,9 +20,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Voucher {
+public class Voucher implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -39,8 +43,8 @@ public class Voucher {
 
     @NotNull
     @DecimalMin(value = "0")
-    @Column(name = "value", nullable = false)
-    private Double value;
+    @Column(name = "voucher_value", nullable = false)
+    private Double voucherValue;
 
     @NotNull
     @DecimalMin(value = "0")
@@ -62,22 +66,22 @@ public class Voucher {
 
     @NotNull
     @DecimalMin(value = "0")
-    @Column(name = "min_value", nullable = false)
+    @Column(name = "voucher_quantity", nullable = false)
     private Long voucherQuantity;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "customer_voucher",
         joinColumns = @JoinColumn(name = "voucher_id"),
         inverseJoinColumns = @JoinColumn(name = "customer_id")
     )
-    private Set<Customer> customers;
+    @JsonIgnoreProperties(value = {"user", "shopOrders", "province", "district", "ward", "vouchers"}, allowSetters = true)
+    private Set<Customer> customers = new HashSet<>();
 
     @Size(max = 200)
     @Column(name = "created_by", length = 200)
     private String createdBy;
 
-    @NotNull
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_date")
     private Long createdDate;
 
     @Size(max = 200)
@@ -87,4 +91,23 @@ public class Voucher {
     @Column(name = "modified_date")
     private Long modifiedDate;
 
+    @Override
+    public String toString() {
+        return "Voucher{" +
+            "id=" + id +
+            ", voucherId='" + voucherId + '\'' +
+            ", validTo=" + validTo +
+            ", validFrom=" + validFrom +
+            ", voucherValue=" + voucherValue +
+            ", minValue=" + minValue +
+            ", maxValue=" + maxValue +
+            ", voucherStatus=" + voucherStatus +
+            ", valueType=" + valueType +
+            ", voucherQuantity=" + voucherQuantity +
+            ", createdBy='" + createdBy + '\'' +
+            ", createdDate=" + createdDate +
+            ", modifiedBy='" + modifiedBy + '\'' +
+            ", modifiedDate=" + modifiedDate +
+            '}';
+    }
 }
