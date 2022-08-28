@@ -1,8 +1,8 @@
-package com.example.webSocketDemo.service;
+package com.example.chatWebsocket.service;
 
-import com.example.webSocketDemo.model.Conversation;
-import com.example.webSocketDemo.repository.UserRepository;
-import com.example.webSocketDemo.repository.ConversationRepository;
+import com.example.chatWebsocket.model.Conversation;
+import com.example.chatWebsocket.repository.UserRepository;
+import com.example.chatWebsocket.repository.ConversationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

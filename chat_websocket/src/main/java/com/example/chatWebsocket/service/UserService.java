@@ -1,7 +1,7 @@
-package com.example.webSocketDemo.service;
+package com.example.chatWebsocket.service;
 
-import com.example.webSocketDemo.model.User;
-import com.example.webSocketDemo.repository.UserRepository;
+import com.example.chatWebsocket.model.User;
+import com.example.chatWebsocket.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +27,7 @@ public class UserService {
                 throw new RuntimeException("Invalid password");
             }
             if (newUser.getPhone() == null ||
-                    newUser.getPhone().length() != 10 ||
+                    newUser.getPhone().length() != 10 &&
                     newUser.getPhone().length() != 11) {
                 throw new RuntimeException("Invalid phone");
             }

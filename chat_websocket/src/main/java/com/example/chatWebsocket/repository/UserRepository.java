@@ -1,6 +1,6 @@
-package com.example.webSocketDemo.repository;
+package com.example.chatWebsocket.repository;
 
-import com.example.webSocketDemo.model.User;
+import com.example.chatWebsocket.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

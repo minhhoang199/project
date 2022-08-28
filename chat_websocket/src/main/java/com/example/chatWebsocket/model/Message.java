@@ -1,8 +1,8 @@
-package com.example.webSocketDemo.model;
+package com.example.chatWebsocket.model;
 
 
-import com.example.webSocketDemo.model.enums.MessageStatus;
-import com.example.webSocketDemo.model.enums.MessageType;
+import com.example.chatWebsocket.model.enums.MessageStatus;
+import com.example.chatWebsocket.model.enums.MessageType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,4 +43,16 @@ public class Message implements Serializable {
     @JoinColumn(name = "conversation_id")
     @JsonIgnoreProperties(value = {"messages"}, allowSetters = true)
     private Conversation conversation;
+
+    @Column(name = "created_by", length = 200)
+    private String createdBy;
+
+    @Column(name = "created_date")
+    private Long createdDate;
+
+    @Column(name = "modified_by", length = 200)
+    private String modifiedBy;
+
+    @Column(name = "modified_date")
+    private Long modifiedDate;
 }

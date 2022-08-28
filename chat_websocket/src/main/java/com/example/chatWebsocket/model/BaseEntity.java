@@ -1,4 +1,4 @@
-package com.example.webSocketDemo.model;
+package com.example.chatWebsocket.model;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

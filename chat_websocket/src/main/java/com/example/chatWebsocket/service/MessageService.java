@@ -1,13 +1,13 @@
-package com.example.webSocketDemo.service;
+package com.example.chatWebsocket.service;
 
-import com.example.webSocketDemo.model.Conversation;
-import com.example.webSocketDemo.model.Message;
-import com.example.webSocketDemo.model.User;
-import com.example.webSocketDemo.model.enums.MessageStatus;
-import com.example.webSocketDemo.model.enums.MessageType;
-import com.example.webSocketDemo.repository.ConversationRepository;
-import com.example.webSocketDemo.repository.MessageRepository;
-import com.example.webSocketDemo.repository.UserRepository;
+import com.example.chatWebsocket.model.Conversation;
+import com.example.chatWebsocket.model.Message;
+import com.example.chatWebsocket.model.User;
+import com.example.chatWebsocket.model.enums.MessageStatus;
+import com.example.chatWebsocket.model.enums.MessageType;
+import com.example.chatWebsocket.repository.ConversationRepository;
+import com.example.chatWebsocket.repository.MessageRepository;
+import com.example.chatWebsocket.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

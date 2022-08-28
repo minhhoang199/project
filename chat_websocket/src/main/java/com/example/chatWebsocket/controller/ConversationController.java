@@ -1,7 +1,7 @@
-package com.example.webSocketDemo.controller;
+package com.example.chatWebsocket.controller;
 
-import com.example.webSocketDemo.model.Conversation;
-import com.example.webSocketDemo.service.ConversationService;
+import com.example.chatWebsocket.model.Conversation;
+import com.example.chatWebsocket.service.ConversationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class ConversationController {
     }
 
     @PostMapping()
-    public ResponseEntity<Conversation> createPrivateChat(
+    public ResponseEntity<Conversation> createConversation(
             @RequestBody Conversation newPrivateChat
     ) {
         final String time = new SimpleDateFormat("HH:mm").format(new Date());

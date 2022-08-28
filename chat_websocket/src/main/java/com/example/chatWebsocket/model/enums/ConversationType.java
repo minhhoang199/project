@@ -1,4 +1,4 @@
-package com.example.webSocketDemo.model.enums;
+package com.example.chatWebsocket.model.enums;
 
 public enum ConversationType {
     PRIVATE_CHAT,

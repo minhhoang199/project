@@ -1,7 +1,7 @@
-package com.example.webSocketDemo.repository;
+package com.example.chatWebsocket.repository;
 
-import com.example.webSocketDemo.model.Conversation;
-import com.example.webSocketDemo.model.Message;
+import com.example.chatWebsocket.model.Conversation;
+import com.example.chatWebsocket.model.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

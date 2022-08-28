@@ -1,7 +1,7 @@
-package com.example.webSocketDemo.controller;
+package com.example.chatWebsocket.controller;
 
-import com.example.webSocketDemo.model.User;
-import com.example.webSocketDemo.service.UserService;
+import com.example.chatWebsocket.model.User;
+import com.example.chatWebsocket.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 public class UserController {
     private UserService userService;
 

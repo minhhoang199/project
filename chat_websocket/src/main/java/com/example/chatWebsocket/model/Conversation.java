@@ -1,6 +1,6 @@
-package com.example.webSocketDemo.model;
+package com.example.chatWebsocket.model;
 
-import com.example.webSocketDemo.model.enums.ConversationType;
+import com.example.chatWebsocket.model.enums.ConversationType;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,4 +43,16 @@ public class Conversation implements Serializable {
             joinColumns = @JoinColumn(name = "conversation_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>();
+
+    @Column(name = "created_by", length = 200)
+    private String createdBy;
+
+    @Column(name = "created_date")
+    private Long createdDate;
+
+    @Column(name = "modified_by", length = 200)
+    private String modifiedBy;
+
+    @Column(name = "modified_date")
+    private Long modifiedDate;
 }
