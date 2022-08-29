@@ -2,9 +2,7 @@ package com.example.chatWebsocket.model;
 
 import com.example.chatWebsocket.model.enums.ConversationType;
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,7 +11,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "conversation")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Conversation implements Serializable {
@@ -23,12 +22,6 @@ public class Conversation implements Serializable {
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
-
-    @Column(name = "created_at", nullable = false)
-    private String createdAt;
-
-    @Column(name = "updated_at")
-    private String updatedAt;
 
     @NotNull
     @Enumerated(EnumType.STRING)

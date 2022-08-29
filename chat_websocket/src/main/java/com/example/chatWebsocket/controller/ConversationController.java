@@ -1,6 +1,7 @@
 package com.example.chatWebsocket.controller;
 
 import com.example.chatWebsocket.model.Conversation;
+import com.example.chatWebsocket.model.vm.ConversationVm;
 import com.example.chatWebsocket.service.ConversationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,22 +25,19 @@ public class ConversationController {
     }
 
     @PostMapping()
-    public ResponseEntity<Conversation> createConversation(
-            @RequestBody Conversation newPrivateChat
-    ) {
-        final String time = new SimpleDateFormat("HH:mm").format(new Date());
-        newPrivateChat.setCreatedAt(time);
-        Conversation rs = conversationService.save(newPrivateChat);
-        return ResponseEntity.ok(rs);
+    public ResponseEntity<String> createConversation(
+            @RequestBody ConversationVm conversationVm
+            ) {
+        this.conversationService.addNewConversation(conversationVm);
+        return ResponseEntity.ok("Create conversation succeed");
     }
 
     @PostMapping("/{conversationId}")
-    public ResponseEntity<Conversation> addAccounts(
+    public ResponseEntity<String> addAccounts(
             @PathVariable("conversationId") Long chatId,
-            @RequestParam("firstPhone") String firstPhone,
-            @RequestParam("secondPhone") String secondPhone
+            @RequestBody List<String> phones
     ){
-        Conversation chat = conversationService.addAccount(firstPhone, secondPhone, chatId);
-        return ResponseEntity.ok(chat);
+        this.conversationService.addMoreUser(phones, chatId);
+        return ResponseEntity.ok("Add more users succeed");
     }
 }
