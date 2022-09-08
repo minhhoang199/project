@@ -14,5 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ShopOrderRepository extends JpaRepository<ShopOrder, Long> {
     Page<ShopOrder> findByCustomerId(Long customerId, Pageable pageable);
+
     Page<ShopOrder> findByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable);
+
+    Page<ShopOrder> findAllByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 }

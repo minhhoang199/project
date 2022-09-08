@@ -25,7 +25,17 @@ public class ShopOrderController {
         try {
             this.shopOrderService.closeOrder(id);
             return ResponseEntity.ok("Close order succeed");
-        } catch (Exception e){
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/admin/status")
+    public ResponseEntity<String> CloseOrderByAdmin(@PathVariable Long id) {
+        try {
+            this.shopOrderService.closeOrderByAdmin(id);
+            return ResponseEntity.ok("Close order succeed");
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -35,10 +45,10 @@ public class ShopOrderController {
         @PathVariable("customerId") Long customerId,
         @RequestParam(value = "status", required = false) OrderStatus orderStatus,
         @RequestParam("pageNo") Optional<Integer> pageNo,
-        @RequestParam("pageSize")Optional<Integer> pageSize
+        @RequestParam("pageSize") Optional<Integer> pageSize
     ) {
         Pageable pageable = PageRequest.of(pageNo.orElse(0), pageSize.orElse(10));
-        if (orderStatus != null){
+        if (orderStatus != null) {
             return ResponseEntity.ok(this.shopOrderService.getAllByCustomerIdAndOrderStatus(customerId, orderStatus, pageable));
         } else {
             return ResponseEntity.ok(this.shopOrderService.getAllByCustomerId(customerId, pageable));
@@ -50,8 +60,22 @@ public class ShopOrderController {
         try {
             this.shopOrderService.processOrder(id);
             return ResponseEntity.ok("Process order succeed");
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<Page<ShopOrder>> getAllShopOrderByAdmin(
+        @RequestParam(value = "status", required = false) OrderStatus orderStatus,
+        @RequestParam("pageNo") Optional<Integer> pageNo,
+        @RequestParam("pageSize") Optional<Integer> pageSize
+    ) {
+        Pageable pageable = PageRequest.of(pageNo.orElse(0), pageSize.orElse(10));
+        if (orderStatus != null) {
+            return ResponseEntity.ok(this.shopOrderService.getAllShopOrderByOrderStatus(orderStatus, pageable));
+        } else {
+            return ResponseEntity.ok(this.shopOrderService.getAllShopOrderByAdmin(pageable));
         }
     }
 }

@@ -1,11 +1,12 @@
 package com.tm.j10.service;
 
 import com.tm.j10.domain.Product;
+
+import java.util.List;
+import java.util.Optional;
 import com.tm.j10.web.rest.vm.NewProductVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 /**
  * Service Interface for managing {@link Product}.
@@ -71,4 +72,7 @@ public interface ProductService {
     public Optional<Product> findProductById(Long id);
 
     void createNewProduct(NewProductVM newProductVM);
+    public List<Product> getProductsByCategoryName(String categoryName, int pageNo, int pageSize);
+
+    public List<Product> search(String keyword, int pageNo, int pageSize);
 }

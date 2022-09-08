@@ -4,8 +4,12 @@ import com.tm.j10.domain.ShopOrder;
 import com.tm.j10.domain.enumeration.OrderStatus;
 import com.tm.j10.repository.CustomerRepository;
 import com.tm.j10.repository.ShopOrderRepository;
+import org.hibernate.criterion.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.hibernate.criterion.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -64,6 +68,24 @@ public class ShopOrderService {
         }
     }
 
+    public void closeOrderByAdmin(Long id) {
+        this.validateNumber(id);
+        Optional<ShopOrder> shopOrder = shopOrderRepository.findById(id);
+        if (shopOrder.isPresent()) {
+            ShopOrder currentShopOder = shopOrder.get();
+            OrderStatus currentStatus = currentShopOder.getOrderStatus();
+            if (currentStatus.equals(OrderStatus.CANCEL_BY_SHOP) ||
+                currentStatus.equals(OrderStatus.COMPLETE) ||
+                currentStatus.equals(OrderStatus.CANCEL_BY_USER)) {
+                throw new RuntimeException(currentStatus + " :invalid status");
+            }
+            currentShopOder.setOrderStatus(OrderStatus.CANCEL_BY_SHOP);
+            shopOrderRepository.save(currentShopOder);
+        } else {
+            throw new RuntimeException("Not found Order");
+        }
+    }
+
     public Page<ShopOrder> getAllByCustomerId(Long customerId, Pageable pageable) {
         this.validateNumber(customerId);
         var customerOtp = this.customerRepository.findById(customerId);
@@ -82,5 +104,15 @@ public class ShopOrderService {
         } else {
             throw new RuntimeException("Not found customer");
         }
+    }
+
+    public Page<ShopOrder> getAllShopOrderByAdmin(Pageable pageable) {
+        var ret = this.shopOrderRepository.findAll(pageable);
+        return ret;
+    }
+
+    public Page<ShopOrder> getAllShopOrderByOrderStatus(OrderStatus orderStatus, Pageable pageable) {
+        var ret = this.shopOrderRepository.findAllByOrderStatus(orderStatus, pageable);
+        return ret;
     }
 }

@@ -47,4 +47,8 @@ public interface ProductRepository extends ProductRepositoryWithBagRelationships
     Page<Product> findByCategoryAndIsValid(Long categoryId, Boolean isValid, Pageable pageable);
 
     Optional<Product> findProductByIdAndIsEnableAndIsValid(Long id, Boolean isEnable, Boolean isValid);
+    List<Product> getByCategoryCategoryNameAndIsEnable(String name, Boolean isEnable, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.name LIKE %?1%")
+    public List<Product> search(String keyword, Pageable pageable);
 }

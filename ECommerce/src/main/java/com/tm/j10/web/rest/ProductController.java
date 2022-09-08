@@ -10,20 +10,44 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/public/products")
 public class ProductController {
+
     private final ProductService productService;
 
-    public ProductController(ProductServiceImpl ProductServiceImpl) {
-        this.productService = ProductServiceImpl;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    //????
-//    @Autowired
-//    StorageRepository storageRepository;
+    @GetMapping("/category")
+    public ResponseEntity<List<Product>> getProductByCategoryName(
+        @RequestParam(value = "categoryName", required = false) String categoryName,
+        @RequestParam(value = "pageNo", required = false) int pageNo,
+        @RequestParam(value = "pageSize", required = false) int pageSize
+    ) {
+        var product = productService.getProductsByCategoryName(categoryName, pageNo,pageSize);
+        if(product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(product);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<Product>> searchProducts(
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "pageNo", required = false) int pageNo,
+        @RequestParam(value = "pageSize", required = false) int pageSize
+    ) {
+        var product = productService.search(keyword, pageNo, pageSize);
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(product);
+    }
 
     @GetMapping("/category/{catid}")
     public ResponseEntity<Page<Product>> findAllByCategoryAndIsValid(
@@ -38,7 +62,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable("id") Long id) {
+    public ResponseEntity<?>getProductById(@PathVariable("id") Long id){
         var ret = this.productService.findProductById(id);
         return ResponseEntity.ok(ret);
     }

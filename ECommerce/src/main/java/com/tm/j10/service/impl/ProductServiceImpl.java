@@ -7,10 +7,12 @@ import com.tm.j10.web.rest.vm.ColorVM;
 import com.tm.j10.web.rest.vm.NewProductVM;
 import com.tm.j10.web.rest.vm.ProductSizeVM;
 import com.tm.j10.web.rest.vm.ProductVM;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,7 +158,6 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
-
     @Override
     public Page<Product> findByCategoryAndIsValid(Long categoryId, Boolean isValid, Pageable pageable){
         if (categoryId == 0) {
@@ -166,6 +167,21 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Category Id can not be negative");
         }
         return this.productRepository.findByCategoryAndIsValid(categoryId, isValid, pageable);
+    }
+
+    @Override
+    public List<Product> getProductsByCategoryName(String categoryName, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return this.productRepository.getByCategoryCategoryNameAndIsEnable(categoryName, true, pageable);
+    }
+
+    @Override
+    public List<Product> search(String keyword, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        if (keyword != null) {
+            return productRepository.search(keyword, pageable);
+        }
+        return productRepository.findAll();
     }
 
     @Override
@@ -278,6 +294,7 @@ public class ProductServiceImpl implements ProductService {
         this.colorRepository.saveAll(newColorList);
         this.productSizeRepository.saveAll(newProductSizeList);
     }
+
 
 
 }

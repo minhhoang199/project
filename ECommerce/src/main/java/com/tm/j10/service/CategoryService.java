@@ -1,7 +1,10 @@
 package com.tm.j10.service;
 
 import com.tm.j10.domain.Category;
+import com.tm.j10.domain.Product;
+
 import com.tm.j10.repository.CategoryRepository;
+import com.tm.j10.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,4 +26,4 @@ public class CategoryService {
         return this.categoryRepository.findBySlug(slug);
     }
 
-}
+   }
