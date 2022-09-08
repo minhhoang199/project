@@ -14,4 +14,5 @@ public class ConversationVm {
     private String name;
     private List<String> phones;
     private ConversationType conversationType;
+    private String invitorPhone;
 }

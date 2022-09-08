@@ -1,13 +1,13 @@
 package com.example.chatWebsocket.controller;
 
 import com.example.chatWebsocket.model.Conversation;
+import com.example.chatWebsocket.model.enums.ConversationStatus;
 import com.example.chatWebsocket.model.vm.ConversationVm;
+import com.example.chatWebsocket.model.vm.InviteeVm;
 import com.example.chatWebsocket.service.ConversationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -20,24 +20,33 @@ public class ConversationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Conversation>> getAll(){
+    public ResponseEntity<List<Conversation>> getAll() {
         return ResponseEntity.ok(conversationService.getAll());
     }
 
     @PostMapping()
     public ResponseEntity<String> createConversation(
             @RequestBody ConversationVm conversationVm
-            ) {
+    ) {
         this.conversationService.addNewConversation(conversationVm);
         return ResponseEntity.ok("Create conversation succeed");
     }
 
     @PostMapping("/{conversationId}")
     public ResponseEntity<String> addAccounts(
-            @PathVariable("conversationId") Long chatId,
-            @RequestBody List<String> phones
-    ){
-        this.conversationService.addMoreUser(phones, chatId);
+            @PathVariable("conversationId") Long conversationId,
+            @RequestBody InviteeVm inviteeVm
+    ) {
+        this.conversationService.addMoreUser(inviteeVm, conversationId);
         return ResponseEntity.ok("Add more users succeed");
+    }
+
+    @PatchMapping("/{conversationId}")
+    public ResponseEntity<String> changeStatus(
+            @PathVariable("conversationId") Long conversationId,
+            @RequestBody ConversationStatus conversationStatus
+    ){
+        this.conversationService.changeConversationStatus(conversationId, conversationStatus);
+        return ResponseEntity.ok("Change conversation status succeed");
     }
 }

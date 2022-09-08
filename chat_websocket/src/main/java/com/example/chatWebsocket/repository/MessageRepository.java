@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    @Query("SELECT m FROM Message m WHERE m.content LIKE %?1% ORDER BY m.createdAt")
+    @Query("SELECT m FROM Message m WHERE m.content LIKE %?1%")
     List<Message> findByContentContaining(String content);
 }

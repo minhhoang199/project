@@ -23,7 +23,7 @@ function connect(event) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
-        var socket = new SockJS('/ws-message');
+        var socket = new SockJS('/chat');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
@@ -34,12 +34,33 @@ function connect(event) {
 
 function onConnected() {
     // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/messages', onMessageReceived);
+    stompClient.subscribe('/topic/public/1', onMessageReceived);
 
     // Tell your username to the server
-    stompClient.send("/app/chat_register",
+    stompClient.send("/app/chat.register/1/users/1",
         {},
-        JSON.stringify({sender: username, type: 'JOIN'})
+        JSON.stringify({
+        sender: username,
+        content: 'A new user has join',
+        messageType: 'JOIN',
+        messageStatus: 'ACTIVE'})
+    )
+
+    connectingElement.classList.add('hidden');
+}
+
+function onLeave() {
+    // Subscribe to the Public Topic
+    stompClient.subscribe('/topic/public/1', onMessageReceived);
+
+    // Tell your username to the server
+    stompClient.send("/app/chat.register/1/users/1",
+        {},
+        JSON.stringify({
+        sender: username,
+        content: 'A new user has left',
+        messageType: 'LEAVE',
+        messageStatus: 'ACTIVE'})
     )
 
     connectingElement.classList.add('hidden');
@@ -56,13 +77,14 @@ function send(event) {
     var messageContent = messageInput.value.trim();
 
     if(messageContent && stompClient) {
-        var chatMessage = {
+        var message = {
             sender: username,
             content: messageInput.value,
-            type: 'CHAT'
+            messageType: 'CHAT',
+            messageStatus: 'ACTIVE'
         };
 
-        stompClient.send("/app/chat_send", {}, JSON.stringify(chatMessage));
+        stompClient.send("/app/sendMessage/1/users/1", {}, JSON.stringify(message));
         messageInput.value = '';
     }
     event.preventDefault();

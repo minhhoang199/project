@@ -1,5 +1,6 @@
 package com.example.chatWebsocket.model;
 
+import com.example.chatWebsocket.model.enums.ConversationStatus;
 import com.example.chatWebsocket.model.enums.ConversationType;
 import com.sun.istack.NotNull;
 import lombok.*;
@@ -22,6 +23,10 @@ public class Conversation implements Serializable {
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "conversation_status", nullable = false)
+    private ConversationStatus conversationStatus;
 
     @NotNull
     @Enumerated(EnumType.STRING)

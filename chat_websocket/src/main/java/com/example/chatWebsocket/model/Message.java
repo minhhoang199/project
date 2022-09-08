@@ -22,7 +22,7 @@ public class Message implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "sender_phone", referencedColumnName = "phone")
     @JsonIgnoreProperties(value = {"messages"}, allowSetters = true)
     private User sender;
 
@@ -31,9 +31,6 @@ public class Message implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private MessageType type;
-
-    @Column(name = "created_at", nullable = false)
-    private String createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "message_status", nullable = false)

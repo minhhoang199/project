@@ -9,6 +9,7 @@ import com.example.chatWebsocket.repository.ConversationRepository;
 import com.example.chatWebsocket.repository.MessageRepository;
 import com.example.chatWebsocket.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class MessageService {
         }
         return messageRepository.findByContentContaining(content);
     }
+
     //Add new message
+    @Transactional
     public void saveMessage(Message newMessage, Long senderId, Long conversationId) {
         //validate new message
         if (newMessage != null){
@@ -41,7 +44,6 @@ public class MessageService {
                     newMessage.getContent().length() == 0) {
                 throw new RuntimeException("Invalid message content");
             }
-            messageRepository.save(newMessage);
         }
 
         //validate sender id
@@ -70,8 +72,8 @@ public class MessageService {
 
         newMessage.setSender(sender);
         newMessage.setConversation(conversation);
-        newMessage.setType(MessageType.CHAT);
-        newMessage.setMessageStatus(MessageStatus.ACTIVE);
+//        newMessage.setType(MessageType.CHAT);
+//        newMessage.setMessageStatus(MessageStatus.ACTIVE);
 
         conversation.getMessages().add(newMessage);
         sender.getMessages().add(newMessage);
