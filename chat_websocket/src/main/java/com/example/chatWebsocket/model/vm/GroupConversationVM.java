@@ -10,9 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConversationVm {
+public class GroupConversationVM {
     private String name;
     private List<String> phones;
-    private ConversationType conversationType;
     private String invitorPhone;
 }

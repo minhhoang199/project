@@ -6,18 +6,19 @@ import com.example.chatWebsocket.model.User;
 import com.example.chatWebsocket.model.enums.ConnectionStatus;
 import com.example.chatWebsocket.model.enums.ConversationStatus;
 import com.example.chatWebsocket.model.enums.ConversationType;
-import com.example.chatWebsocket.model.vm.ConversationVm;
-import com.example.chatWebsocket.model.vm.InviteeVm;
+import com.example.chatWebsocket.model.vm.GroupConversationVM;
+import com.example.chatWebsocket.model.vm.InviteeVM;
+import com.example.chatWebsocket.model.vm.PrivateConversationVM;
 import com.example.chatWebsocket.repository.ConnectionRepository;
-import com.example.chatWebsocket.repository.UserRepository;
 import com.example.chatWebsocket.repository.ConversationRepository;
+import com.example.chatWebsocket.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
@@ -34,117 +35,146 @@ public class ConversationService {
         this.connectionRepository = connectionRepository;
     }
 
-    public void addNewConversation(ConversationVm conversationVm) {
-        if (conversationVm != null) {
+    private void validatePhone(String phone) {
+        Pattern pattern = Pattern.compile("^0\\d{9}$|^84\\d{9}$");
+        Matcher matcher = pattern.matcher(phone);
+        if (!matcher.find()) {
+            throw new RuntimeException(phone + ": Invalid phone format");
+        }
+    }
+
+
+    public void addNewPrivateConversation(PrivateConversationVM privateConversationVM) {
+        if (privateConversationVM != null) {
             //validation
-            String name = conversationVm.getName();
+            String name = privateConversationVM.getName();
             if (name == null ||
                     name.length() <= 1) {
                 throw new RuntimeException("Invalid name");
             }
 
-            Optional<User> optionalInvitor = this.userRepository.findByPhone(conversationVm.getInvitorPhone());
+            String invitorPhone = privateConversationVM.getInvitorPhone();
+            validatePhone(invitorPhone);
+            Optional<User> optionalInvitor = this.userRepository.findByPhone(invitorPhone);
+            if (optionalInvitor.isEmpty()) {
+                throw new RuntimeException("Not found invitor");
+            }
+            User invitor = optionalInvitor.get();
+
+            String inviteePhone = privateConversationVM.getInviteePhone();
+            validatePhone(inviteePhone);
+            Optional<User> optionalInvitee = this.userRepository.findByPhone(inviteePhone);
+            if (optionalInvitee.isEmpty()) {
+                throw new RuntimeException("Not found invitee");
+            }
+            User invitee = optionalInvitee.get();
+
+            List<Conversation> conversationList = this.conversationRepository.findByPhoneAndType(invitorPhone, ConversationType.PRIVATE_CHAT);
+            for (Conversation conversation: conversationList){
+                if (conversation.getUsers().contains(invitee)){
+                    throw new RuntimeException("Private chat already existed");
+                }
+            }
+
+            Conversation newConversation = new Conversation();
+            newConversation.setName(name);
+            newConversation.setConversationType(ConversationType.PRIVATE_CHAT);
+
+            //add invitor to the list
+            Set<User> users = new HashSet<>();
+
+            //add users to the list
+            Optional<Connection> optionalConnectionWithInvitee = this.connectionRepository.findByUsersAndStatus(
+                    invitorPhone,
+                    inviteePhone,
+                    ConnectionStatus.CONNECTED);
+            Optional<Connection> optionalConnectionWithInvitor = this.connectionRepository.findByUsersAndStatus(
+                    inviteePhone,
+                    invitorPhone,
+                    ConnectionStatus.CONNECTED);
+            if (optionalConnectionWithInvitor.isEmpty() || optionalConnectionWithInvitee.isEmpty()) {
+                throw new RuntimeException("Invalid connection between invitor and invitee");
+            }
+
+            invitor.getConversations().add(newConversation);
+            //this.userRepository.save(invitor);
+            users.add(invitor);
+
+            invitee.getConversations().add(newConversation);
+            //this.userRepository.save(invitee);
+            users.add(invitee);
+
+            newConversation.setUsers(users);
+            newConversation.setConversationStatus(ConversationStatus.ENABLE);
+            this.userRepository.saveAll(users);
+            this.conversationRepository.save(newConversation);
+        }
+    }
+
+
+    public void addGroupConversation(GroupConversationVM conversationVM) {
+        if (conversationVM != null) {
+            //validation
+            String name = conversationVM.getName();
+            if (name == null ||
+                    name.length() <= 1) {
+                throw new RuntimeException("Invalid name");
+            }
+
+            String invitorPhone = conversationVM.getInvitorPhone();
+            validatePhone(invitorPhone);
+            Optional<User> optionalInvitor = this.userRepository.findByPhone(invitorPhone);
             if (optionalInvitor.isEmpty()) {
                 throw new RuntimeException("Not found invitor");
             }
 
             User invitor = optionalInvitor.get();
 
-            ConversationType conversationType = conversationVm.getConversationType();
-            if (conversationType == null) {
-                throw new RuntimeException("Invalid conversation type");
-            }
-            List<String> phones = conversationVm.getPhones();
-            if (phones == null ||
-                    (conversationType == ConversationType.PRIVATE_CHAT && phones.size() != 1) ||
-                    (conversationType == ConversationType.GROUP_CHAT && phones.size() < 2)) {
+            List<String> phones = conversationVM.getPhones();
+            if (phones == null || phones.size() < 2) {
                 throw new RuntimeException("Invalid list of phones");
             }
 
             Conversation newConversation = new Conversation();
             newConversation.setName(name);
-            newConversation.setConversationType(conversationType);
+            newConversation.setConversationType(ConversationType.GROUP_CHAT);
 
             //add invitor to the list
             Set<User> users = new HashSet<>();
             invitor.getConversations().add(newConversation);
-            this.userRepository.save(invitor);
+//            this.userRepository.save(invitor);
             users.add(invitor);
 
             //add users to the list
-            if (conversationType == ConversationType.PRIVATE_CHAT) {
-                String inviteePhone = phones.get(0);
+            for (String phone : phones
+            ) {
+                validatePhone(phone);
 
-                if (inviteePhone == null ||
-                        inviteePhone.length() != 10 &&
-                                inviteePhone.length() != 11) {
-                    throw new RuntimeException("Invalid phone");
+                Optional<User> optionalUser = this.userRepository.findByPhone(phone);
+                if (optionalUser.isEmpty()) {
+                    throw new RuntimeException("Not found account by phone");
                 }
-
-                Optional<User> optionalInvitee = this.userRepository.findByPhone(inviteePhone);
-                if (optionalInvitee.isEmpty()) {
-                    throw new RuntimeException("Not found account by invitee phone");
-                }
-
-                Optional<Connection> optionalConnectionWithInvitee = this.connectionRepository.findByUsersAndStatus(
-                        conversationVm.getInvitorPhone(),
-                        inviteePhone,
+                Optional<Connection> optionalConnectionWithUser = this.connectionRepository.findByUsersAndStatus(
+                        conversationVM.getInvitorPhone(),
+                        phone,
                         ConnectionStatus.CONNECTED);
                 Optional<Connection> optionalConnectionWithInvitor = this.connectionRepository.findByUsersAndStatus(
-                        inviteePhone,
-                        conversationVm.getInvitorPhone(),
+                        phone,
+                        conversationVM.getInvitorPhone(),
                         ConnectionStatus.CONNECTED);
-
-                if (optionalConnectionWithInvitor.isPresent() || optionalConnectionWithInvitee.isPresent()) {
-                    throw new RuntimeException("Private chat already exist");
+                if (optionalConnectionWithInvitor.isEmpty() || optionalConnectionWithUser.isEmpty()) {
+                    throw new RuntimeException("Invalid connection between invitor and User");
                 }
 
-                User invitee = optionalInvitee.get();
-                invitee.getConversations().add(newConversation);
-                this.userRepository.save(invitee);
-                users.add(invitee);
-
-                Connection connectionWithInvitee = new Connection();
-                connectionWithInvitee.setFollowingUser(invitor);
-                connectionWithInvitee.setFollowedUser(invitee);
-                connectionWithInvitee.setConnectionStatus(ConnectionStatus.CONNECTED);
-
-                this.connectionRepository.save(connectionWithInvitee);
-            } else {
-                for (String phone : phones
-                ) {
-                    if (phone == null ||
-                            phone.length() != 10 &&
-                                    phone.length() != 11) {
-                        throw new RuntimeException("Invalid phone");
-                    }
-
-                    Optional<User> optionalUser = this.userRepository.findByPhone(phone);
-                    if (optionalUser.isEmpty()) {
-                        throw new RuntimeException("Not found account by phone");
-                    }
-
-                    Optional<Connection> optionalConnectionWithUser = this.connectionRepository.findByUsersAndStatus(
-                            conversationVm.getInvitorPhone(),
-                            phone,
-                            ConnectionStatus.CONNECTED);
-                    Optional<Connection> optionalConnectionWithInvitor = this.connectionRepository.findByUsersAndStatus(
-                            phone,
-                            conversationVm.getInvitorPhone(),
-                            ConnectionStatus.CONNECTED);
-                    if (optionalConnectionWithInvitor.isEmpty() || optionalConnectionWithUser.isEmpty()) {
-                        throw new RuntimeException("Invalid connection between invitor and User");
-                    }
-
-                    User currentUser = optionalUser.get();
-                    currentUser.getConversations().add(newConversation);
-                    this.userRepository.save(currentUser);
-                    users.add(currentUser);
-                }
+                User currentUser = optionalUser.get();
+                currentUser.getConversations().add(newConversation);
+//                this.userRepository.save(currentUser);
+                users.add(currentUser);
             }
 
             newConversation.setUsers(users);
             newConversation.setConversationStatus(ConversationStatus.ENABLE);
+            this.userRepository.saveAll(users);
             this.conversationRepository.save(newConversation);
         }
     }
@@ -153,13 +183,9 @@ public class ConversationService {
         return conversationRepository.findAll();
     }
 
-    public void addMoreUser(InviteeVm inviteeVm, Long conversationId) {
+    public void addMoreUser(InviteeVM inviteeVm, Long conversationId) {
         String invitorPhone = inviteeVm.getInvitorPhone();
-        if (invitorPhone == null ||
-                invitorPhone.length() != 10 &&
-                        invitorPhone.length() != 11) {
-            throw new RuntimeException("Invalid phone");
-        }
+        validatePhone(invitorPhone);
 
         Optional<User> optionalInvitor = this.userRepository.findByPhone(invitorPhone);
         if (optionalInvitor.isEmpty()) {
@@ -175,15 +201,14 @@ public class ConversationService {
         }
         Conversation currentConversation = optConversation.get();
         Set<User> users = currentConversation.getUsers();
+        if (!users.contains(invitor)) {
+            throw new RuntimeException("Invitor does not belong to conversation");
+        }
 
         List<String> inviteePhones = inviteeVm.getInviteePhones();
         for (String phone : inviteePhones
         ) {
-            if (phone == null ||
-                    phone.length() != 10 &&
-                            phone.length() != 11) {
-                throw new RuntimeException("Invalid phone");
-            }
+            validatePhone(phone);
 
             Optional<User> optionalUser = this.userRepository.findByPhone(phone);
             if (optionalUser.isEmpty()) {
@@ -211,13 +236,13 @@ public class ConversationService {
         this.conversationRepository.save(currentConversation);
     }
 
-    public void changeConversationStatus(Long id, ConversationStatus conversationStatus){
-        if (id == null || id <= 0){
+    public void changeConversationStatus(Long id, ConversationStatus conversationStatus) {
+        if (id == null || id <= 0) {
             throw new RuntimeException("Invalid Id");
         }
 
         Optional<Conversation> optionalConversation = this.conversationRepository.findById(id);
-        if (optionalConversation.isEmpty()){
+        if (optionalConversation.isEmpty()) {
             throw new RuntimeException("Not found conversation");
         }
 

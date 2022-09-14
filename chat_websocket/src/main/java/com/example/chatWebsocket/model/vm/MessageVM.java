@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageVm {
+public class MessageVM {
     private String sender;
     private String content;
     private MessageType messageType;

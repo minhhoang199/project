@@ -1,18 +1,17 @@
 package com.example.chatWebsocket.model.vm;
 
-import com.example.chatWebsocket.model.enums.ConnectionStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConnectionStatusVm {
-    private String followingPhone;
-    private String followedPhone;
-    private ConnectionStatus connectionStatus;
+public class InviteeVM {
+    private List<String> inviteePhones;
+    private String invitorPhone;
 }

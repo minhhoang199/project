@@ -1,17 +1,17 @@
 package com.example.chatWebsocket.model.vm;
 
+import com.example.chatWebsocket.model.enums.ConversationType;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InviteeVm {
-    private List<String> inviteePhones;
+@Data
+public class PrivateConversationVM {
+    private String name;
     private String invitorPhone;
+    private String inviteePhone;
 }

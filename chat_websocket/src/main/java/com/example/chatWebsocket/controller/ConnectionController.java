@@ -1,6 +1,6 @@
 package com.example.chatWebsocket.controller;
 
-import com.example.chatWebsocket.model.vm.ConnectionStatusVm;
+import com.example.chatWebsocket.model.vm.ConnectionStatusVM;
 import com.example.chatWebsocket.model.vm.RequestConnectionVM;
 import com.example.chatWebsocket.service.ConnectionService;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class ConnectionController {
 
     @PatchMapping
     public ResponseEntity<String> changeStatus(
-            @RequestBody ConnectionStatusVm connectionStatusVm){
+            @RequestBody ConnectionStatusVM connectionStatusVm){
         this.connectionService.changeConnectionStatus(connectionStatusVm);
         return ResponseEntity.ok("Create Connection success");
     }
