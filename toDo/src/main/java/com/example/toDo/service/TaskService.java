@@ -1,6 +1,7 @@
 package com.example.toDo.service;
 
 import com.example.toDo.model.Task;
+import com.example.toDo.model.enums.State;
 import com.example.toDo.repeository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class TaskService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(strDate, formatter);
-        Page<Task> pageResult = taskRepository.findByTitleContainingAndDate(title, date, pageable);
+        Page<Task> pageResult = taskRepository.findByContentContainingAndDate(title, date, pageable);
 
         return pageResult.toList();
     }
@@ -66,7 +67,7 @@ public class TaskService {
         validateNumber(pageSize);
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        Page<Task> pageResult = taskRepository.findByTitleContaining(title, pageable);
+        Page<Task> pageResult = taskRepository.findByContentContaining(title, pageable);
 
         return pageResult.toList();
     }
@@ -90,7 +91,7 @@ public class TaskService {
 
     public boolean addNewTask(Task newTask) {
         if (newTask != null) {
-            if (newTask.isDone()) {
+            if (newTask.getTaskState().equals(State.DONE)) {
                 throw new RuntimeException("New task cannot be done already");
             }
             taskRepository.save(newTask);
@@ -105,13 +106,13 @@ public class TaskService {
         Optional<Task> opTask = taskRepository.findById(id);
         if (opTask.isPresent()) {
             Task oldTask = opTask.get();
-            if (newTask.getTitle() != null && newTask.getTitle().length() > 0) {
-                oldTask.setTitle(newTask.getTitle());
+            if (newTask.getContent() != null && newTask.getContent().length() > 0) {
+                oldTask.setContent(newTask.getContent());
             }
             if (newTask.getDate() != null) {
-                oldTask.setTitle(newTask.getTitle());
+                oldTask.setContent(newTask.getContent());
             }
-            oldTask.setDone(newTask.isDone());
+            oldTask.setTaskState(newTask.getTaskState());
             taskRepository.save(oldTask);
             return true;
         } else {

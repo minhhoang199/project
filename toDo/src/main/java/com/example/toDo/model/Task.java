@@ -1,5 +1,6 @@
 package com.example.toDo.model;
 
+import com.example.toDo.model.enums.State;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,9 @@ public class Task {
     private Integer id;
 
     @Column(nullable = false)
-    private String title;
+    private String content;
     @Column(nullable = false)
     private LocalDate date;
     @Column
-    private boolean isDone;
+    private State taskState;
 }

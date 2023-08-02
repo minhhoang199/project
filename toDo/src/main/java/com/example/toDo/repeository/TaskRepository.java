@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
-    Page<Task> findByTitleContainingAndDate(String title, LocalDate date, Pageable pageable);
-    Page<Task> findByTitleContaining(String title, Pageable pageable);
+    Page<Task> findByContentContainingAndDate(String content, LocalDate date, Pageable pageable);
+    Page<Task> findByContentContaining(String title, Pageable pageable);
     Page<Task> findByDate(LocalDate date, Pageable pageable);
 }
