@@ -26,6 +26,6 @@ public class EmailService {
     @KafkaListener(groupId = "foodItemGroup", topics = "notification")
     public String sendEmailOTP() {
         //"hoangminhst1001@gmail.com", "this is subject", "this is body"
-        return "";
+        return "1st";
     }
 }
