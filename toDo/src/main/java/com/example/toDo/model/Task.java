@@ -1,6 +1,7 @@
 package com.example.toDo.model;
 
 import com.example.toDo.model.enums.State;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,9 @@ public class Task {
     @Column(nullable = false)
     private String content;
     @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy")
     private LocalDate date;
     @Column
+    @Enumerated(EnumType.STRING)
     private State taskState;
 }

@@ -91,9 +91,10 @@ public class TaskService {
 
     public boolean addNewTask(Task newTask) {
         if (newTask != null) {
-            if (newTask.getTaskState().equals(State.DONE)) {
-                throw new RuntimeException("New task cannot be done already");
-            }
+//            if (newTask.getTaskState().equals(State.DONE)) {
+//                throw new RuntimeException("New task cannot be done already");
+//            }
+            newTask.setTaskState(State.ACTIVE);
             taskRepository.save(newTask);
             return true;
         } else {
