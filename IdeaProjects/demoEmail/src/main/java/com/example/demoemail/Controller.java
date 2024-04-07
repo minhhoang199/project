@@ -14,7 +14,7 @@ public class Controller {
     @PostMapping
     public String send() {
         this.emailService.sendEmail("hoangminhst1001@gmail.com", "this is subject", "this is body");
-        return "Send !!!";
+        return "2st";
     }
 
 }
