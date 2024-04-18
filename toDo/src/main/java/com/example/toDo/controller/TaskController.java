@@ -3,6 +3,7 @@ package com.example.toDo.controller;
 import com.example.toDo.model.ResponseObject;
 import com.example.toDo.model.Task;
 import com.example.toDo.model.dto.TaskDto;
+import com.example.toDo.model.request.ChangeStatusRequest;
 import com.example.toDo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
-@CrossOrigin
 public class TaskController {
     @Autowired
     private TaskService taskService;
@@ -80,12 +80,11 @@ public class TaskController {
 
 
     //Define 203 is "Update success"
-    @PatchMapping("/{id}")
+    @PatchMapping()
     public ResponseEntity<ResponseObject> updateTask(
-            @PathVariable("id") String id,
-            @RequestBody Task newTask){
+            @RequestBody TaskDto newTask){
         try {
-            var isUpdated = taskService.updateTask(id, newTask);
+            var isUpdated = taskService.updateTask(newTask);
             if (isUpdated) {
                 return ResponseEntity.ok().body(new ResponseObject("203", "Update success", null));
             } else {
@@ -107,6 +106,22 @@ public class TaskController {
                 return ResponseEntity.internalServerError().body(new ResponseObject("500", "Internal server error", null));
             }
         } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(new ResponseObject("400", e.getMessage(), null));
+        }
+    }
+
+
+    @PatchMapping("/changeStatus")
+    public ResponseEntity<ResponseObject> changeStatusTasks(
+            @RequestBody ChangeStatusRequest statusRequest){
+        try {
+            var isUpdated = taskService.changeStatus(statusRequest);
+            if (isUpdated) {
+                return ResponseEntity.ok().body(new ResponseObject("205", "Change status success", null));
+            } else {
+                return ResponseEntity.internalServerError().body(new ResponseObject("500", "Internal server error", null));
+            }
+        }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(new ResponseObject("400", e.getMessage(), null));
         }
     }

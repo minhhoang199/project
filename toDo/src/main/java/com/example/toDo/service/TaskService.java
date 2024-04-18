@@ -3,14 +3,17 @@ package com.example.toDo.service;
 import com.example.toDo.model.Task;
 import com.example.toDo.model.dto.TaskDto;
 import com.example.toDo.model.enums.State;
+import com.example.toDo.model.request.ChangeStatusRequest;
 import com.example.toDo.repeository.TaskRepository;
 import com.example.toDo.utils.TaskTranslator;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -80,21 +83,21 @@ public class TaskService {
         return true;
     }
 
-    public boolean updateTask(String id, Task newTask) {
-        Optional<Task> opTask = taskRepository.findById(id);
-        if (opTask.isPresent()) {
-            Task oldTask = opTask.get();
-            if (newTask.getContent() != null && newTask.getContent().length() > 0) {
-                oldTask.setContent(newTask.getContent());
+    public boolean updateTask(TaskDto updateTask) {
+        if (StringUtils.isNotBlank(updateTask.getId())){
+            Optional<Task> opTask = taskRepository.findById(updateTask.getId());
+            if (opTask.isPresent()) {
+                Task oldTask = opTask.get();
+                if (StringUtils.isNotBlank(updateTask.getContent())) oldTask.setContent(updateTask.getContent());
+                if (updateTask.getDate() != null) oldTask.setDate(updateTask.getDate());
+                if (updateTask.getTaskState() != null) oldTask.setTaskState(updateTask.getTaskState());
+                taskRepository.save(this.taskTranslator.transferToTask(updateTask));
+                return true;
+            } else {
+                throw new RuntimeException("Not found task");
             }
-            if (newTask.getDate() != null) {
-                oldTask.setContent(newTask.getContent());
-            }
-            oldTask.setTaskState(newTask.getTaskState());
-            taskRepository.save(oldTask);
-            return true;
         } else {
-            throw new RuntimeException("Not found task");
+            throw new RuntimeException("Id must not be empty");
         }
     }
 
@@ -106,5 +109,20 @@ public class TaskService {
         } else {
             throw new RuntimeException("Not found task");
         }
+    }
+
+    public boolean changeStatus(ChangeStatusRequest statusRequest) {
+        if (CollectionUtils.isEmpty(statusRequest.getListIdsAndState())) {
+            throw new RuntimeException("List of id empty !");
+        }
+        List<Task> taskList = this.taskRepository.findByIds(statusRequest.getListIdsAndState().keySet());
+        if (CollectionUtils.isEmpty(taskList)) {
+            throw new RuntimeException("Not found any task!");
+        }
+        for (Task task: taskList) {
+            task.setTaskState(statusRequest.getListIdsAndState().get(task.getId()));
+        }
+        this.taskRepository.saveAll(taskList);
+        return true;
     }
 }
