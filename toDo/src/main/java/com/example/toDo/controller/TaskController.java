@@ -2,6 +2,7 @@ package com.example.toDo.controller;
 
 import com.example.toDo.model.ResponseObject;
 import com.example.toDo.model.Task;
+import com.example.toDo.model.dto.TaskDto;
 import com.example.toDo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
+@CrossOrigin
 public class TaskController {
     @Autowired
     private TaskService taskService;
@@ -63,7 +65,7 @@ public class TaskController {
 
     //Define 202 is "Create success"
     @PostMapping
-    public ResponseEntity<ResponseObject> addNewTask(@RequestBody Task newTask){
+    public ResponseEntity<ResponseObject> addNewTask(@RequestBody TaskDto newTask){
         try {
             var isCreated = taskService.addNewTask(newTask);
             if (isCreated) {
@@ -80,7 +82,7 @@ public class TaskController {
     //Define 203 is "Update success"
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseObject> updateTask(
-            @PathVariable("id") Integer id,
+            @PathVariable("id") String id,
             @RequestBody Task newTask){
         try {
             var isUpdated = taskService.updateTask(id, newTask);
@@ -96,7 +98,7 @@ public class TaskController {
 
     //Define 204 is "Delete success"
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseObject> deleteTask(@PathVariable("id") Integer id){
+    public ResponseEntity<ResponseObject> deleteTask(@PathVariable("id") String id){
         try {
             var isDeleted = this.taskService.deleteTask(id);
             if (isDeleted) {

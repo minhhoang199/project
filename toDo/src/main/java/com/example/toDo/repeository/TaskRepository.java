@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Integer> {
+public interface TaskRepository extends JpaRepository<Task, String> {
     Page<Task> findByContentContainingAndDate(String content, LocalDate date, Pageable pageable);
     Page<Task> findByContentContaining(String title, Pageable pageable);
     Page<Task> findByDate(LocalDate date, Pageable pageable);
