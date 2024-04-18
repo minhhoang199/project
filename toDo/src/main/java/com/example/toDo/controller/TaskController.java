@@ -42,20 +42,20 @@ public class TaskController {
         try {
             //Not input title condition search
             if (title == null && date != null){
-                List<Task> taskList = taskService.getByDate(date, pageNo.orElse(0), pageSize.orElse(10));
+                List<TaskDto> taskList = taskService.getByDate(date, pageNo.orElse(0), pageSize.orElse(10));
                 return ResponseEntity.ok(new ResponseObject("201", "Success", taskList));
             }
             //Not input date condition search
             else if (title != null && date == null){
-                List<Task> taskList = taskService.getByTitle(title, pageNo.orElse(0), pageSize.orElse(10));
+                List<TaskDto> taskList = taskService.getByTitle(title, pageNo.orElse(0), pageSize.orElse(10));
                 return ResponseEntity.ok(new ResponseObject("201", "Success", taskList));
             }  // Input both search conditions
             else if (title != null && date != null){
-                List<Task> taskList = taskService.getByTitleAndDate(title, date, pageNo.orElse(0), pageSize.orElse(10));
+                List<TaskDto> taskList = taskService.getByTitleAndDate(title, date, pageNo.orElse(0), pageSize.orElse(10));
                 return ResponseEntity.ok(new ResponseObject("201", "Success", taskList));
             }//Not input both search conditions
             else {
-                List<Task> taskList = taskService.getAll(pageNo.orElse(0), pageSize.orElse(10));
+                List<TaskDto> taskList = taskService.getAll(pageNo.orElse(0), pageSize.orElse(10));
                 return ResponseEntity.ok(new ResponseObject("201", "Success", taskList));
             }
         } catch (RuntimeException e){

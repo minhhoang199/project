@@ -23,44 +23,44 @@ public class TaskService {
     private TaskRepository taskRepository;
     private TaskTranslator taskTranslator;
 
-    public List<Task> getAll(Integer pageNo, Integer pageSize) {
+    public List<TaskDto> getAll(Integer pageNo, Integer pageSize) {
         //pageNo can be 0
         if (pageNo < 0) {
             throw new RuntimeException("This parameter can not be negative");
         }
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        Page<Task> pageResult = taskRepository.findAll(pageable);
+        Page<Task> pageTask = taskRepository.findAll(pageable);
+        Page<TaskDto> pageResult = pageTask.map(task -> this.taskTranslator.transferToDto(task));
         return pageResult.toList();
     }
 
     //Search by Title and date
-    public List<Task> getByTitleAndDate(String title, String strDate, Integer pageNo, Integer pageSize) {
+    public List<TaskDto> getByTitleAndDate(String title, String strDate, Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(strDate, formatter);
-        Page<Task> pageResult = taskRepository.findByContentContainingAndDate(title, date, pageable);
-
+        Page<Task> pageTask = taskRepository.findByContentContainingAndDate(title, date, pageable);
+        Page<TaskDto> pageResult = pageTask.map(task -> this.taskTranslator.transferToDto(task));
         return pageResult.toList();
     }
 
     //Search by Title
-    public List<Task> getByTitle(String title, Integer pageNo, Integer pageSize) {
+    public List<TaskDto> getByTitle(String title, Integer pageNo, Integer pageSize) {
         //pageNo can be 0
         if (pageNo < 0) {
             throw new RuntimeException("This parameter can not be negative");
         }
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-
-        Page<Task> pageResult = taskRepository.findByContentContaining(title, pageable);
-
+        Page<Task> pageTask = taskRepository.findByContentContaining(title, pageable);
+        Page<TaskDto> pageResult = pageTask.map(task -> this.taskTranslator.transferToDto(task));
         return pageResult.toList();
     }
 
 
     //Search by date
-    public List<Task> getByDate(String strDate, Integer pageNo, Integer pageSize) {
+    public List<TaskDto> getByDate(String strDate, Integer pageNo, Integer pageSize) {
         //pageNo can be 0
         if (pageNo < 0) {
             throw new RuntimeException("This parameter can not be negative");
@@ -69,8 +69,8 @@ public class TaskService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(strDate, formatter);
-        Page<Task> pageResult = taskRepository.findByDate(date, pageable);
-
+        Page<Task> pageTask = taskRepository.findByDate(date, pageable);
+        Page<TaskDto> pageResult = pageTask.map(task -> this.taskTranslator.transferToDto(task));
         return pageResult.toList();
     }
 
