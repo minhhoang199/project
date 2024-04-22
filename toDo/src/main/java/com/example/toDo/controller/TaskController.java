@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +66,7 @@ public class TaskController {
 
     //Define 202 is "Create success"
     @PostMapping
-    public ResponseEntity<ResponseObject> addNewTask(@RequestBody TaskDto newTask){
+    public ResponseEntity<ResponseObject> addNewTask(@Valid @RequestBody TaskDto newTask){
         try {
             var isCreated = taskService.addNewTask(newTask);
             if (isCreated) {
@@ -82,7 +83,7 @@ public class TaskController {
     //Define 203 is "Update success"
     @PatchMapping()
     public ResponseEntity<ResponseObject> updateTask(
-            @RequestBody TaskDto newTask){
+            @Valid @RequestBody TaskDto newTask){
         try {
             var isUpdated = taskService.updateTask(newTask);
             if (isUpdated) {
