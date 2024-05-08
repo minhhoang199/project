@@ -1,14 +1,16 @@
 package com.example.toDo.service;
 
+import com.example.toDo.model.ResponseObject;
 import com.example.toDo.model.Task;
 import com.example.toDo.model.dto.TaskDto;
 import com.example.toDo.model.enums.State;
 import com.example.toDo.model.request.ChangeStatusRequest;
+import com.example.toDo.model.request.GetTaskDetailRequest;
 import com.example.toDo.repeository.TaskRepository;
+import com.example.toDo.utils.ResponseUtil;
 import com.example.toDo.utils.TaskTranslator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class TaskService {
     private TaskRepository taskRepository;
     private TaskTranslator taskTranslator;
+    private ResponseUtil responseUtil;
 
     public List<TaskDto> getAll(Integer pageNo, Integer pageSize) {
         //pageNo can be 0
@@ -124,5 +127,13 @@ public class TaskService {
         }
         this.taskRepository.saveAll(taskList);
         return true;
+    }
+
+    public ResponseObject getById(GetTaskDetailRequest getTaskDetailRequest) {
+        Optional<Task> optionalTask = taskRepository.findById(getTaskDetailRequest.getTaskId());
+        if (optionalTask.isEmpty()){
+            return new ResponseObject("404", "Not found task by Id!", null);
+        }
+        return new ResponseObject("200", "Success",  this.taskTranslator.transferToDto(optionalTask.get()));
     }
 }
